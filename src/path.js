@@ -418,7 +418,7 @@
              sm = options.smooth || false,
              mv = 1,
              ds = options.length,
-             dx = ds / options.frequency / 2,
+             dx = options.frequency / 2,
              dy = options.amplitude,
              ad = x + dx / 2,
              last = {x: x, y: y},
