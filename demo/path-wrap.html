@@ -67,11 +67,12 @@ canvas, svg {
 $(function()
 {
 
-   var path, nw, ref;
+   var path, nw, ref,
+       ds = (2*Math.PI*50);
 
    path = PATH([
                  {fn: 'start', x: 0, y: 25},
-                 {fn: 'wave', length: (2*Math.PI*50), amplitude: 25, frequency: 5, smooth: true, density: 10}
+                 {fn: 'wave', length: ds, amplitude: 25, frequency: ds / 5, smooth: true, density: 10}
                ]).move(5,5);
 
    ref = PATH([
