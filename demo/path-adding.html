@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Creation Test</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+canvas {
+   border: 1px dotted black;
+}
+
+</style>
+
+<div>
+ <canvas></canvas>
+</div>
+
+<script>
+$(function()
+{
+
+   var path, point,
+       c = $('canvas')[0];
+
+   c.height = 300;
+   c.width = 300;
+   r = 100;
+
+   // First line of star
+   path = PATH([
+               {fn: 'start', x: 200, y: 150},
+               {fn: 'line', x: 200 + r, y: 150}
+             ]).rotate(-10);
+
+   // Second line makes first point
+   path.duplicate()
+           .rotate((90 + 72), 'start')
+           .appendTo(path, true);
+
+   // Save this for the fifth point
+   point = path.duplicate().rotate(-72);
+
+   // Duplicate the first to make the second
+   path.duplicate()
+           .rotate(72, 'end')
+           .appendTo(path, true);
+
+   // Duplicate the 2 points to make the 3rd and 4th
+   path.duplicate()
+           .rotate(72*2, 'end')
+           .appendTo(path, true);
+
+   // Add saved 5th point and center the star
+   path.prepend(point, true)
+       .move(c.width / 2 - path.center().x, c.height / 2 - path.center().y);
+
+   // Animate the path plot and finish up with a raster overlay in yellow
+   $('canvas')
+      .delay(500)
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 3000,
+           easing: 'linear',
+           step: PATH.adapter.animatePlot(path),
+           complete: function () {PATH.adapter.drawCanvas(c, path, {fillStyle: 'yellow'});}
+         });
+});
+</script>
+
+</body>
+</html>

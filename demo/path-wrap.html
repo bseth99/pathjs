@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Wrap Test</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+input {
+   position: relative;
+   top: -30px;
+}
+
+canvas, svg {
+   position: relative;
+   border: 1px dotted black;
+}
+
+</style>
+
+<div id="labels" style="text-align: center">
+ <span>
+   Reference Path
+ </span>
+
+ <span>
+   Modifying Path
+ </span>
+
+ <span>
+   Combined Path Using Wrap()
+ </span>
+</div>
+
+<div id="drawings" style="text-align: center">
+ <span>
+   <canvas id="circle"></canvas>
+ </span>
+
+ <span style="position:relative; top: -75px">
+   <span style="position:relative; top: -25px; font-size: 16pt">+</span>
+   <canvas id="wave" ></canvas>
+   <span style="position:relative; top: -25px; font-size: 16pt">=</span>
+ </span>
+
+ <span>
+   <canvas id="wrap"></canvas>
+ </span>
+</div>
+
+<div style="text-align: center">
+ <span>
+   SVG Polygon from Path<br/>
+   <svg id="shape"></svg>
+ <span>
+</div>
+
+<script>
+$(function()
+{
+
+   var path, nw, ref;
+
+   path = PATH([
+                 {fn: 'start', x: 0, y: 25},
+                 {fn: 'wave', length: (2*Math.PI*50), amplitude: 25, frequency: 5, smooth: true, density: 10}
+               ]).move(5,5);
+
+   ref = PATH([
+                 {fn: 'start', x: 200, y: 100},
+                 {fn: 'circle', radius: 100, density: 1}
+               ]).move(5,5);
+
+   nw = path.duplicate().wrap(ref).rotate(180/5);
+   nw.move(nw.width() / 2 - nw.center().x + 5, nw.height() / 2 - nw.center().y + 5);
+
+   $('#circle')[0].height = ref.height() + 10;
+   $('#circle')[0].width = ref.width() + 10;
+
+   $('#circle')
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 2000,
+           easing: 'linear',
+           step: PATH.adapter.animatePlot(ref)
+         });
+
+   $('#wave')[0].height = path.height() + 10;
+   $('#wave')[0].width = path.width() + 10;
+
+   $('#wave')
+      .delay(1000)
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 2000,
+           easing: 'linear',
+           step: PATH.adapter.animatePlot(path)
+         });
+
+   $('#wrap')[0].height = nw.height() + 10;
+   $('#wrap')[0].width = nw.width() + 10;
+
+   $('#wrap')
+      .delay(2000)
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 2000,
+           easing: 'linear',
+           step: PATH.adapter.animatePlot(nw)
+         });
+
+   $('#shape').css({height: nw.height() + 10, width: nw.width() + 10});
+
+   var $el = $(PATH.adapter.drawSVG($('#shape')[0], nw));
+
+   $el[0].id = 'shape1';
+   $el.css('fill', 'yellow');
+   $el.css('stroke', 'red');
+
+   var c = $('#drawings > span');
+   $('#labels > span').each(function (i,e)
+    {
+       e.style.display = 'inline-block';
+       e.style.width = $(c[i]).outerWidth()+'px';
+    });
+
+});
+</script>
+
+</body>
+</html>

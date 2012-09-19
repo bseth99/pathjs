@@ -1,0 +1,3 @@
+grunt
+
+rm path.js

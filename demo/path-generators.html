@@ -1,0 +1,216 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Generator Test</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+input {
+   position: relative;
+   top: -30px;
+}
+
+canvas {
+   border: 1px dotted black;
+}
+
+</style>
+
+<div>
+ Line:</br>
+ <canvas id="line"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+<div>
+ Circle:</br>
+ <canvas id="circle"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+<div>
+ Ellipse:</br>
+ <canvas id="ellipse"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+<div>
+ Bezier:</br>
+ <canvas id="bezier"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+<div>
+ ZigZag:</br>
+ <canvas id="zigzag"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+<div>
+ Sinusoidal:</br>
+ <canvas id="sine"></canvas>
+ <input type="button" value="Draw" />
+</div>
+
+
+<script>
+$(function()
+{
+
+   var fn = {
+      line: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 10, y: 10},
+                          {fn: 'line', x: 250, y: 75}
+                        ]);
+
+            $('#line')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 2000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         },
+
+      circle: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 100, y: 50},
+                          {fn: 'circle', radius: 40}
+                        ]);
+
+            path.duplicate()
+                .move(120, 0)
+                .appendTo(path);
+
+            $('#circle')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 2000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         },
+
+      ellipse: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 120, y: 50},
+                          {fn: 'ellipse', a: 45, b: 25}
+                        ]);
+
+            path.duplicate()
+                .rotate(90)
+                .move(120, 45)
+                .appendTo(path);
+
+            $('#ellipse')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 2000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         },
+
+      bezier: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 10, y: 10},
+                          {fn: 'bezier', points: [{x: 100, y:80}, {x: 400, y:50}, {x: 175, y:10}, {x: 220, y:50}]}
+                        ]);
+
+            $('#bezier')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 3000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         },
+
+      zigzag: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 10, y: 50},
+                          {fn: 'wave', length: 400, amplitude: 40, frequency: 10}
+                        ]);
+
+            $('#zigzag')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 5000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         },
+
+      sine: function()
+         {
+            var path;
+
+            path = PATH([
+                          {fn: 'start', x: 10, y: 50},
+                          {fn: 'wave', length: 400, amplitude: 40, frequency: 10, smooth: true}
+                        ]);
+
+
+            $('#sine')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 5000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path)
+                  });
+         }
+   };
+
+
+   $('canvas').each(function (i,c)
+     {
+        c.height = 100;
+        c.width = 500;
+     });
+
+
+   $('input').click(function (e)
+    {
+       var d = $(this).siblings('canvas')[0];
+
+       fn[d.id]();
+    });
+
+
+
+});
+</script>
+
+</body>
+</html>

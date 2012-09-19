@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Adapter Test</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+.wrapper {
+   position: relative;
+}
+
+canvas {
+   border: 1px dotted black;
+}
+
+svg {
+   border: 1px dotted black;
+   height: 250px;
+   width: 250px;
+}
+
+.box {
+   position: absolute;
+   background-color: green;
+   height: 3px;
+   width: 3px;
+   z-index: 1000;
+}
+</style>
+
+<div class="wrapper">
+  <div id="trace" class="box"></div>
+  <canvas id="plot"></canvas>
+  <canvas id="raster"></canvas>
+  <svg id="vector" xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  </svg>
+<div>
+
+
+<script>
+$(function()
+{
+   $('canvas').each(function (i,c)
+     {
+        c.height = 250;
+        c.width = 250;
+     });
+
+
+/*
+                 {fn: 'circle', radius: 100, arc: {start: 180, end: 360}},
+                 {fn: 'circle', radius: 100, arc: {start: 180, end: 360}},
+                 {fn: 'interpolate', points: [{x: 520, y: 450}, {x: 360, y: 550}, {x: 300, y: 300}]}
+*/
+
+   var path = PATH([
+                 {fn: 'start', x: 125, y: 125},
+                 {fn: 'ellipse', a: 50, b: 10, arc: {start: 20, end: 340}}
+               ]);
+
+   var base = path.duplicate();
+
+   path.append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .append(base.rotate(45, 'start'), true)
+       .move(-12, 5);
+
+
+   $('#trace')
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 5000,
+           easing: 'linear',
+           step: PATH.adapter.animateNode(path)
+         });
+
+   $('#plot')
+      .animate({
+           tabIndex: 0
+         }, {
+           duration: 5000,
+           easing: 'linear',
+           step: PATH.adapter.animatePlot(path)
+         });
+
+   PATH.adapter.drawCanvas($('#raster')[0], path);
+   PATH.adapter.drawSVG($('#vector')[0], path);
+
+});
+</script>
+
+</body>
+</html>

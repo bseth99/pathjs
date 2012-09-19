@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Animation Test</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+#area {
+   position: relative;
+   border: 1px dotted black;
+   height: 600px;
+   width: 600px;
+}
+
+svg {
+   position: absolute;
+}
+
+</style>
+
+<div id="area">
+
+ <svg id="c1">
+   <circle cx="42" cy="42" r="40" stroke="black" stroke-width="2" fill="red"/>
+ </svg>
+
+ <svg id="c2">
+   <circle cx="42" cy="42" r="40" stroke="black" stroke-width="2" fill="green"/>
+ </svg>
+
+ <svg id="c3">
+   <circle cx="42" cy="42" r="40" stroke="black" stroke-width="2" fill="blue"/>
+ </svg>
+
+ <svg id="c4">
+   <circle cx="42" cy="42" r="40" stroke="black" stroke-width="2" fill="orange"/>
+ </svg>
+
+</div>
+
+<script>
+$(function()
+{
+
+   var path,
+       p = $('#area');
+
+   path = PATH([
+               {fn: 'start', x: 0, y: 0},
+               {fn: 'ellipse', a: 200, b: 80}
+             ]);
+
+   var ct = path.center();
+
+   // Center path to area
+   path.move(p.width() / 2 - ct.x, p.height() / 2 - ct.y);
+
+   // Center on path
+   $('svg').css({
+       transform: 'translate(-42px,-42px)'
+     });
+
+   function go()
+   {
+      path.rotate(2, path.center());
+
+      $('#c1')
+         .animate({
+              tabIndex: 0
+            }, {
+              duration: 3000,
+              easing: 'linear',
+              step: PATH.adapter.animateNode(path.duplicate().reverse()),
+              complete: go
+            });
+
+      $('#c2')
+         .animate({
+              tabIndex: 0
+            }, {
+              duration: 3000,
+              easing: 'linear',
+              step: PATH.adapter.animateNode(path.duplicate().reverse().rotate(-45, path.center())),
+            });
+
+      $('#c3')
+         .animate({
+              tabIndex: 0
+            }, {
+              duration: 3000,
+              easing: 'linear',
+              step: PATH.adapter.animateNode(path.duplicate().rotate(65, path.center())),
+            });
+
+      $('#c4')
+         .animate({
+              tabIndex: 0
+            }, {
+              duration: 3000,
+              easing: 'linear',
+              step: PATH.adapter.animateNode(path.duplicate().rotate(-70, path.center())),
+            });
+   }
+
+   go();
+
+});
+</script>
+
+</body>
+</html>

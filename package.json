@@ -1,0 +1,14 @@
+{
+  "name": "path",
+  "description": "Interpolated path generation and manipulation in Javascript",
+  "version": "0.1",
+  "author": "Ben Olson (http://bseth99.github.com/)",
+  "homepage": "http://github.com/bseth99/pathjs",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bseth99/pathjs.git"
+  },
+  "bugs": {
+    "url" : "http://github.com/bseth99/pathjs/issues"
+  }
+}
