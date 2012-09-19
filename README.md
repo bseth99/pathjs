@@ -18,7 +18,7 @@ it uses adapters to convert the paths into something that can be used with a lib
 Just include path.js in your page.  
 
 ``` html
-<script src='path.js'></script>
+<script src='path.min.js'></script>
 ```
 
 Then build a path using a generator, manipulate it, then use an adapter to do something useful with it:
