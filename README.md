@@ -51,6 +51,8 @@ Then build a path using a generator, manipulate it, then use an adapter to do so
          
 ```
 
+*Note*: More usage details are coming as I work on the documention.
+
 ## Demo
 
 See the [demo](http://bseth99.github.com/pathjs/index.html) pages.
