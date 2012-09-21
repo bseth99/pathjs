@@ -1,3 +1,28 @@
+/*
+Copyright (c) 2012 Ben Olson
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 ;(function(undefined)
 {
 
@@ -127,6 +152,16 @@
          this.box = null;
 
          return this;
+      },
+
+     scale: function (sx, sy, o)
+      { // TODO
+
+      },
+
+     skew: function (rx, ry, o)
+      { // TODO
+
       },
 
      rotate: function (r, o)
@@ -305,7 +340,10 @@
 
      step: function (t)
       {
-         var pos = Math.floor((this.points.length - 1) * t);
+         // Normalize to be between 0 and 1
+         var j = t > 1 ? t - Math.floor(t) : t,
+             k = j < 0 ? 1 - j : j,
+             pos = Math.floor((this.points.length - 1) * k);
 
          return this.points[pos];
       }
@@ -350,9 +388,59 @@
              y1 = options.start.y || 0,
              x2 = options.x,
              y2 = options.y,
-             c = plotLine(x1, y1, x2, y2, (options.density || 5));
+             c = plotLine(x1, y1, x2, y2, (options.density || 3));
 
          return c;
+
+      },
+
+     rectangle: function(options)
+      {
+         var step = options.density || 5,
+             sx = options.start.x || 0,
+             sy = options.start.y || 0,
+             w = options.w,
+             h = options.h,
+             cr = options.cornerRadius || 0,
+             rect = PATH([{fn: 'start', x: sx,     y: sy}]),
+             arc, lines, ctr, tm, len;
+
+
+         if (!cr.length)
+            cr = [cr,cr,cr,cr];
+
+         arc = cr.map(function (r, i)
+           {
+              return (
+                PATH([{fn: 'circle', radius: r, arc: {start: 0, end: 90}, density: 1}]).rotate((i - 2) * 90)
+                 );
+           });
+
+         lines = cr.map(function (r, i)
+           {
+              return (
+                i % 2 == 0 ?
+                  PATH([{fn: 'line',    x: w-cr[i]-cr[(i+1)%4], y: 0,                   density: 1}])
+                :
+                  PATH([{fn: 'line',    x: 0,                   y: h-cr[i]-cr[(i+1)%4], density: 1}])
+                );
+           });
+
+         rect.append(arc[0], true)
+             .append(lines[0], true)
+             .append(arc[1], true)
+             .append(lines[1], true)
+             .append(arc[2], true)
+             .append(lines[2].reverse(), true)
+             .append(arc[3], true)
+             .append(lines[3].reverse(), true);
+
+         // Fix point density
+         tm = [], len = rect.points.length;
+         for (ctr=0;ctr<len;ctr++)
+            if (ctr % step == 0 || ctr == len - 1) tm.push(rect.points[ctr]);
+
+         return tm;
 
       },
 
@@ -361,7 +449,7 @@
          var x = options.start.x || 0,
              y = options.start.y || 0,
              r = options.radius,
-             c = plotEllipseRect(x-r*2, y-r, x, y+r, (options.density || 5));
+             c = plotEllipseRect(x-r*2, y-r, x, y+r, (options.density || 3));
 
          var arcs = 0,
              arce = c.length,
@@ -369,8 +457,8 @@
 
          if (options.arc)
          {
-            arcs = Math.floor((options.arc.start / 360) * arce);
-            arce = Math.ceil((options.arc.end / 360) * arce);
+            arcs = Math.round((options.arc.start / 360) * arce);
+            arce = Math.round((options.arc.end / 360) * arce);
 
             c = c.slice(arcs, arce);
 
@@ -388,7 +476,7 @@
              y = options.start.y || 0,
              a = options.a,
              b = options.b,
-             c = plotEllipseRect(x-a*2, y-b, x, y+b, (options.density || 5));
+             c = plotEllipseRect(x-a*2, y-b, x, y+b, (options.density || 3));
 
          var arcs = 0,
              arce = c.length,
@@ -522,9 +610,10 @@
       {
          var ctx = canvas.getContext('2d'),
              pt = path.first(),
-             options = options || {};
+             options = options || {},
+             fill = options.fillStyle || 'none';
 
-         ctx.fillStyle = options.fillStyle || 'white';
+         ctx.fillStyle = fill;
          ctx.strokeStyle = options.strokeStyle || 'black';
          ctx.lineWidth = options.lineWidth || 1;
 
@@ -534,8 +623,11 @@
          while (pt = path.next())
             ctx.lineTo(pt.x, pt.y);
 
-         ctx.closePath();
-         ctx.fill();
+         if (fill != 'none')
+         {
+            ctx.closePath();
+            ctx.fill();
+         }
 
          ctx.stroke();
       },
