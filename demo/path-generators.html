@@ -4,7 +4,7 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-   <title>Path Generator Test</title>
+   <title>Path Generator Demo</title>
 
    <script src="http://code.jquery.com/jquery.js"></script>
    <script src="../src/path.js"></script>
@@ -14,66 +14,346 @@
 
 <style>
 
-input {
+* {
+   font-family: verdana,arial,helvetica,sans-serif;
+}
+
+.wrapper {
+   border: 1px dotted dimgray;
+   margin: 10px;
+   margin-top: 40px;
    position: relative;
-   top: -30px;
+}
+
+.clearfix:after {
+   content: ".";
+   display: block;
+   clear: both;
+   visibility: hidden;
+   line-height: 0;
+   height: 0;
+}
+
+.clearfix {
+   display: inline-block;
+}
+
+html[xmlns] .clearfix {
+   display: block;
+}
+
+* html .clearfix {
+   height: 1%;
+}
+
+div {
+   padding: 3px;
 }
 
 canvas {
-   border: 1px dotted black;
+   border: 1px dotted red;
+}
+
+.label-type {
+   font-size: 12pt;
+   font-weight: bold;
+   position: absolute;
+   top: -30px;
+}
+
+.drawing {
+   float: left;
+   height: 200px;
+   width: 400px;
+}
+
+.options {
+   margin-left: 50px;
+   float: left;
+}
+
+.code-out {
+   margin: 3px;
+   padding: 0px;
+   float: left;
+   min-height: 50px;
+   width: 100%;
+}
+
+pre {
+   font-size: 8pt;
+   margin: 0px;
+   padding: 0px;
+}
+
+.discussion {
+   margin: 10px;
+   border: 3px solid silver;
 }
 
 </style>
 
-<div>
- Line:</br>
- <canvas id="line"></canvas>
- <input type="button" value="Draw" />
+<h3>Path Generator Demo</h3>
+
+<div class="discussion">
+Below is an example of each generator function currently available.  All of the available options
+can be entered and the resulting path will be drawn on a canvas.  Additionally, the code snippet
+required to create the path will be output.  Some options are not required - they are marked with
+a "*" but are always used in this demo to illustate the option.  This demo also shows the ordering
+of the points in the path.  The plot animations follow each path in order of the points.  After
+the animation is complete, the path is redrawn with continuous lines.
 </div>
 
-<div>
- Circle:</br>
- <canvas id="circle"></canvas>
- <input type="button" value="Draw" />
+<div class="clearfix wrapper">
+   <div class="label-type">Line</div>
+   <div class="drawing">
+     <canvas id="line"></canvas>
+   </div>
+   <div class="options">
+     <div>Start</div>
+     <div>
+     X: <input id="line-start-x" type="text" style="width: 30px" value="350" />
+     Y: <input id="line-start-y" type="text" style="width: 30px" value="20" />
+     </div>
+
+     <div>End</div>
+     <div>
+     X: <input id="line-end-x" type="text" style="width: 30px" value="25" />
+     Y: <input id="line-end-y" type="text" style="width: 30px" value="175" />
+     </div>
+     <div>
+       <input type="button" value="Draw" draw="line"  />
+     </div>
+   </div>
+
+   <div class="code-out">
+      Code:
+      <pre id="line-code" ></pre>
+   </div>
+
 </div>
 
-<div>
- Ellipse:</br>
- <canvas id="ellipse"></canvas>
- <input type="button" value="Draw" />
+<div class="clearfix wrapper">
+   <div class="label-type">Rectangle</div>
+   <div class="drawing">
+     <canvas id="rectangle"></canvas>
+   </div>
+   <div class="options">
+     <div>Start</div>
+     <div>
+     X: <input id="rect-start-x" type="text" style="width: 30px" value="50" />
+     Y: <input id="rect-start-y" type="text" style="width: 30px" value="20" />
+     </div>
+
+     <div>Dimensions</div>
+     <div>
+     W: <input id="rect-width" type="text" style="width: 30px" value="200" />
+     H: <input id="rect-height" type="text" style="width: 30px" value="125" />
+     </div>
+
+     <div>Corner Radius*</div>
+     <div>
+     TL: <input id="rect-cr-tl" type="text" style="width: 30px" value="0" />
+     TR: <input id="rect-cr-tr" type="text" style="width: 30px" value="0" />
+     BR: <input id="rect-cr-br" type="text" style="width: 30px" value="0" />
+     BL: <input id="rect-cr-bl" type="text" style="width: 30px" value="0" />
+     </div>
+
+     <div>
+       <input type="button" value="Draw" draw="rectangle" />
+     </div>
+   </div>
+
+   <div class="code-out">
+      Code:
+      <pre id="rect-code" ></pre>
+   </div>
 </div>
 
-<div>
- Bezier:</br>
- <canvas id="bezier"></canvas>
- <input type="button" value="Draw" />
+<div class="clearfix wrapper">
+   <div class="label-type">Circle</div>
+   <div class="drawing">
+     <canvas id="circle"></canvas>
+   </div>
+
+   <div class="options">
+     <div>Start</div>
+     <div>
+     X: <input id="circle-start-x" type="text" style="width: 30px" value="250" />
+     Y: <input id="circle-start-y" type="text" style="width: 30px" value="100" />
+     </div>
+
+     <div>Size</div>
+     <div>
+     Radius: <input id="circle-radius" type="text" style="width: 30px" value="75" />
+     </div>
+
+     <div>Arc*</div>
+     <div>
+     Start: <input id="circle-arc-start" type="text" style="width: 30px" value="0" />
+     End: <input id="circle-arc-end" type="text" style="width: 30px" value="360" />
+     </div>
+
+     <div>
+       <input type="button" value="Draw" draw="circle"  />
+     </div>
+   </div>
+
+   <div class="code-out">
+      Code:
+      <pre id="circle-code" ></pre>
+   </div>
+
 </div>
 
-<div>
- ZigZag:</br>
- <canvas id="zigzag"></canvas>
- <input type="button" value="Draw" />
+<div class="clearfix wrapper">
+   <div class="label-type">Ellipse</div>
+   <div class="drawing">
+     <canvas id="ellipse"></canvas>
+   </div>
+
+      <div class="options">
+        <div>Start</div>
+        <div>
+        X: <input id="ellipse-start-x" type="text" style="width: 30px" value="250" />
+        Y: <input id="ellipse-start-y" type="text" style="width: 30px" value="100" />
+        </div>
+
+        <div>Size</div>
+        <div>
+        A: <input id="ellipse-a" type="text" style="width: 30px" value="80" />
+        B: <input id="ellipse-b" type="text" style="width: 30px" value="50" />
+        </div>
+
+        <div>Arc*</div>
+        <div>
+        Start: <input id="ellipse-arc-start" type="text" style="width: 30px" value="0" />
+        End: <input id="ellipse-arc-end" type="text" style="width: 30px" value="360" />
+        </div>
+
+        <div>
+          <input type="button" value="Draw" draw="ellipse"  />
+        </div>
+      </div>
+
+      <div class="code-out">
+         Code:
+         <pre id="ellipse-code" ></pre>
+   </div>
 </div>
 
-<div>
- Sinusoidal:</br>
- <canvas id="sine"></canvas>
- <input type="button" value="Draw" />
+<div class="clearfix wrapper">
+   <div class="label-type">Bezier</div>
+   <div class="drawing">
+     <canvas id="bezier"></canvas>
+   </div>
+
+      <div class="options">
+        <div>Start</div>
+        <div>
+        X: <input id="bezier-start-x" type="text" style="width: 30px" value="180" />
+        Y: <input id="bezier-start-y" type="text" style="width: 30px" value="75" />
+        </div>
+
+        <div class="clearfix">
+           <div style="float: left">
+              <div>Point 1</div>
+              <div>
+              X: <input id="bezier-x1" type="text" style="width: 30px" value="80" />
+              Y: <input id="bezier-y1" type="text" style="width: 30px" value="50" />
+              </div>
+
+              <div>Point 2</div>
+              <div>
+              X: <input id="bezier-x2" type="text" style="width: 30px" value="20" />
+              Y: <input id="bezier-y2" type="text" style="width: 30px" value="185" />
+              </div>
+           </div>
+
+           <div style="float: left">
+              <div>Point 3</div>
+              <div>
+              X: <input id="bezier-x3" type="text" style="width: 30px" value="350" />
+              Y: <input id="bezier-y3" type="text" style="width: 30px" value="25" />
+              </div>
+
+              <div>Point 4</div>
+              <div>
+              X: <input id="bezier-x4" type="text" style="width: 30px" value="250" />
+              Y: <input id="bezier-y4" type="text" style="width: 30px" value="150" />
+              </div>
+           </div>
+        </div>
+
+        <div>
+          <input type="button" value="Draw" draw="bezier"  />
+        </div>
+      </div>
+
+      <div class="code-out">
+         Code:
+         <pre id="bezier-code" ></pre>
+   </div>
 </div>
 
+<div class="clearfix wrapper">
+   <div class="label-type">Wave</div>
+   <div class="drawing">
+     <canvas id="wave"></canvas>
+   </div>
+
+      <div class="options">
+        <div>Start</div>
+        <div>
+        X: <input id="wave-start-x" type="text" style="width: 30px" value="10" />
+        Y: <input id="wave-start-y" type="text" style="width: 30px" value="100" />
+        </div>
+
+        <div>Size</div>
+        <div>
+        Length: <input id="wave-length" type="text" style="width: 30px" value="380" />
+        Amplitude: <input id="wave-amplitude" type="text" style="width: 30px" value="40" />
+        Frequency: <input id="wave-frequency" type="text" style="width: 30px" value="70" />
+        Smooth: <input id="wave-smooth" type="checkbox" />
+        </div>
+
+        <div>
+          <input type="button" value="Draw" draw="wave"  />
+        </div>
+      </div>
+
+      <div class="code-out">
+         Code:
+         <pre id="wave-code" ></pre>
+   </div>
+</div>
+
+<br/><br/><br/><br/><br/>
 
 <script>
 $(function()
 {
+   function clearCanvas (canvas)
+   {
+       var ctx = canvas.getContext( "2d" );
+
+       ctx.fillStyle = "white";
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+   }
 
    var fn = {
       line: function()
          {
-            var path;
+            var path,
+                code,
+                x1 = parseInt($('#line-start-x')[0].value, 10),
+                y1 = parseInt($('#line-start-y')[0].value, 10),
+                x2 = parseInt($('#line-end-x')[0].value, 10),
+                y2 = parseInt($('#line-end-y')[0].value, 10);
 
             path = PATH([
-                          {fn: 'start', x: 10, y: 10},
-                          {fn: 'line', x: 250, y: 75}
+                          {fn: 'start', x: x1, y: y1},
+                          {fn: 'line', x: x2, y: y2}
                         ]);
 
             $('#line')
@@ -82,22 +362,79 @@ $(function()
                   }, {
                     duration: 2000,
                     easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
                   });
+
+
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+x1+", y: "+y1+"}, \n"+
+                   "      {fn: 'line', x: "+x2+", y: "+y2+"} \n"+
+                   "    ]); \n";
+
+            $('#line-code').text(code);
+         },
+
+      rectangle: function(canvas)
+         {
+            var path,
+                code,
+                x = parseInt($('#rect-start-x')[0].value, 10),
+                y = parseInt($('#rect-start-y')[0].value, 10),
+                h = parseInt($('#rect-height')[0].value, 10),
+                w = parseInt($('#rect-width')[0].value, 10),
+                tl = parseInt($('#rect-cr-tl')[0].value, 10),
+                tr = parseInt($('#rect-cr-tr')[0].value, 10),
+                br = parseInt($('#rect-cr-br')[0].value, 10),
+                bl = parseInt($('#rect-cr-bl')[0].value, 10);
+
+            path = PATH([
+                          {fn: 'start', x: x, y: y},
+                          {fn: 'rectangle', w: w, h: h, cornerRadius: [tl,tr,br,bl]}
+                        ]);
+
+
+            $('#rectangle')
+               .animate({
+                    tabIndex: 0
+                  }, {
+                    duration: 2000,
+                    easing: 'linear',
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
+                  });
+
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+x+", y: "+y+"}, \n"+
+                   "      {fn: 'rectangle', w: "+w+", h: "+h+", cornerRadius: ["+tl+","+tr+","+br+","+bl+"]} \n"+
+                   "    ]); \n";
+
+            $('#rect-code').text(code);
+
          },
 
       circle: function()
          {
-            var path;
+            var path,
+                code,
+                cx = parseInt($('#circle-start-x')[0].value, 10),
+                cy = parseInt($('#circle-start-y')[0].value, 10),
+                r = parseInt($('#circle-radius')[0].value, 10),
+                arcs = parseInt($('#circle-arc-start')[0].value, 10),
+                arce = parseInt($('#circle-arc-end')[0].value, 10);
 
             path = PATH([
-                          {fn: 'start', x: 100, y: 50},
-                          {fn: 'circle', radius: 40}
+                          {fn: 'start', x: cx, y: cy},
+                          {fn: 'circle', radius: r, arc: {start: arcs, end: arce}}
                         ]);
-
-            path.duplicate()
-                .move(120, 0)
-                .appendTo(path);
 
             $('#circle')
                .animate({
@@ -105,23 +442,37 @@ $(function()
                   }, {
                     duration: 2000,
                     easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
                   });
+
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+cx+", y: "+cy+"}, \n"+
+                   "      {fn: 'circle', radius: "+r+", arc: {start: "+arcs+", end: "+arce+"}} \n"+
+                   "    ]); \n";
+
+            $('#circle-code').text(code);
          },
 
       ellipse: function()
          {
-            var path;
+            var path,
+                code,
+                cx = parseInt($('#ellipse-start-x')[0].value, 10),
+                cy = parseInt($('#ellipse-start-y')[0].value, 10),
+                a = parseInt($('#ellipse-a')[0].value, 10),
+                b = parseInt($('#ellipse-b')[0].value, 10),
+                arcs = parseInt($('#ellipse-arc-start')[0].value, 10),
+                arce = parseInt($('#ellipse-arc-end')[0].value, 10);
 
             path = PATH([
-                          {fn: 'start', x: 120, y: 50},
-                          {fn: 'ellipse', a: 45, b: 25}
+                          {fn: 'start', x: cx, y: cy},
+                          {fn: 'ellipse', a: a, b: b, arc: {start: arcs, end: arce}}
                         ]);
-
-            path.duplicate()
-                .rotate(90)
-                .move(120, 45)
-                .appendTo(path);
 
             $('#ellipse')
                .animate({
@@ -129,17 +480,40 @@ $(function()
                   }, {
                     duration: 2000,
                     easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
                   });
+
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+cx+", y: "+cy+"}, \n"+
+                   "      {fn: 'ellipse', a: "+a+", b: "+b+",arc: {start: "+arcs+", end: "+arce+"}} \n"+
+                   "    ]); \n";
+
+            $('#ellipse-code').text(code);
          },
 
       bezier: function()
          {
-            var path;
+            var path,
+                code,
+                sx = parseInt($('#bezier-start-x')[0].value, 10),
+                sy = parseInt($('#bezier-start-y')[0].value, 10),
+                x1 = parseInt($('#bezier-x1')[0].value, 10),
+                y1 = parseInt($('#bezier-y1')[0].value, 10),
+                x2 = parseInt($('#bezier-x2')[0].value, 10),
+                y2 = parseInt($('#bezier-y2')[0].value, 10),
+                x3 = parseInt($('#bezier-x3')[0].value, 10),
+                y3 = parseInt($('#bezier-y3')[0].value, 10),
+                x4 = parseInt($('#bezier-x4')[0].value, 10),
+                y4 = parseInt($('#bezier-y4')[0].value, 10);
 
             path = PATH([
-                          {fn: 'start', x: 10, y: 10},
-                          {fn: 'bezier', points: [{x: 100, y:80}, {x: 400, y:50}, {x: 175, y:10}, {x: 220, y:50}]}
+                          {fn: 'start', x: sx, y: sy},
+                          {fn: 'bezier', points: [{x:x1, y:y1}, {x:x2, y:y2}, {x:x3, y:y3}, {x:x4, y:y4}]}
                         ]);
 
             $('#bezier')
@@ -148,63 +522,77 @@ $(function()
                   }, {
                     duration: 3000,
                     easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
                   });
+
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+sx+", y: "+sy+"}, \n"+
+                   "      {fn: 'bezier', points: [{x:"+x1+", y:"+y1+"}, {x:"+x2+", y:"+y2+"}, {x:"+x3+", y:"+y3+"}, {x:"+x4+", y:"+y4+"}]} \n"+
+                   "    ]); \n";
+
+            $('#bezier-code').text(code);
          },
 
-      zigzag: function()
+      wave: function()
          {
-            var path;
+            var path,
+                code,
+                sx = parseInt($('#wave-start-x')[0].value, 10),
+                sy = parseInt($('#wave-start-y')[0].value, 10),
+                len = parseInt($('#wave-length')[0].value, 10),
+                amp = parseInt($('#wave-amplitude')[0].value, 10),
+                freq = parseInt($('#wave-frequency')[0].value, 10),
+                smo = ($('#wave-smooth')[0].checked);
 
             path = PATH([
-                          {fn: 'start', x: 10, y: 50},
-                          {fn: 'wave', length: 400, amplitude: 40, frequency: 70}
+                          {fn: 'start', x: sx, y: sy},
+                          {fn: 'wave', length: len, amplitude: amp, frequency: freq, smooth: smo}
                         ]);
 
-            $('#zigzag')
+            $('#wave')
                .animate({
                     tabIndex: 0
                   }, {
                     duration: 5000,
                     easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
+                    step: PATH.adapter.animatePlot(path),
+                    complete: function ()
+                      {
+                         clearCanvas(canvas);
+                         PATH.adapter.drawCanvas(canvas, path);
+                      }
                   });
-         },
 
-      sine: function()
-         {
-            var path;
+            code = "PATH([ \n"+
+                   "      {fn: 'start', x: "+sx+", y: "+sy+"}, \n"+
+                   "      {fn: 'wave', length: "+len+", amplitude: "+amp+", frequency: "+freq+", smooth: "+(smo ? 'true' : 'false')+"} \n"+
+                   "    ]); \n";
 
-            path = PATH([
-                          {fn: 'start', x: 10, y: 50},
-                          {fn: 'wave', length: 400, amplitude: 40, frequency: 70, smooth: true}
-                        ]);
-
-
-            $('#sine')
-               .animate({
-                    tabIndex: 0
-                  }, {
-                    duration: 5000,
-                    easing: 'linear',
-                    step: PATH.adapter.animatePlot(path)
-                  });
+            $('#wave-code').text(code);
          }
+
    };
 
 
    $('canvas').each(function (i,c)
      {
-        c.height = 100;
-        c.width = 500;
+        c.height = 200;
+        c.width = 400;
      });
 
 
-   $('input').click(function (e)
+   $('input[type=button]').click(function (e)
     {
-       var d = $(this).siblings('canvas')[0];
+       var d = $(this).attr('draw');
+           canvas = $(this).closest('.wrapper').find('canvas')[0];
 
-       fn[d.id]();
+       clearCanvas(canvas);
+       fn[d](canvas);
     });
 
 
