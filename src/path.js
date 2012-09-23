@@ -138,15 +138,18 @@ OTHER DEALINGS IN THE SOFTWARE.
          return this;
       },
 
-     move: function (tx, ty)
+     move: function (tx, ty, o)
       {
          var len = this.points.length,
-             i = 0;
+             i = 0,
+             t,
+             o = (o && o.x ? o : __resolve(this.points, o)) || {x: 0, y: 0};
 
          for (;i<len;i++)
          {
-            this.points[i].x += tx;
-            this.points[i].y += ty;
+            t = {x: this.points[i].x - o.x, y: this.points[i].y - o.y};
+            this.points[i].x = o.x + t.x + tx;
+            this.points[i].y = o.y + t.y + ty;
          }
 
          this.box = null;
@@ -155,13 +158,46 @@ OTHER DEALINGS IN THE SOFTWARE.
       },
 
      scale: function (sx, sy, o)
-      { // TODO
+      {
+         var len = this.points.length,
+             i = 0,
+             t,
+             o = (o && o.x ? o : __resolve(this.points, o)) || {x: 0, y: 0};
 
+         for (;i<len;i++)
+         {
+            t = {x: this.points[i].x - o.x, y: this.points[i].y - o.y};
+            this.points[i].x = o.x + t.x * sx;
+            this.points[i].y = o.y + t.y * sy;
+         }
+
+         this.box = null;
+
+         return this;
       },
 
      skew: function (rx, ry, o)
-      { // TODO
+      {
+         var len = this.points.length,
+             i = 0,
+             t,
+             o = (o && o.x ? o : __resolve(this.points, o)) || {x: 0, y: 0},
+             m =
+              [
+               [1                  , Math.tan(rx * _RAD)],
+               [Math.tan(ry * _RAD), 1]
+              ];
 
+         for (;i<len;i++)
+         {
+            t = {x: this.points[i].x - o.x, y: this.points[i].y - o.y};
+            this.points[i].x = o.x + t.x * m[0][0] + t.y * m[0][1];
+            this.points[i].y = o.y + t.x * m[1][0] + t.y * m[1][1];
+         }
+
+         this.box = null;
+
+         return this;
       },
 
      rotate: function (r, o)

@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Strict//EN">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+   <title>Path Transforms Demo</title>
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="../src/path.js"></script>
+
+</head>
+<body>
+
+<style>
+
+* {
+   font-family: verdana,arial,helvetica,sans-serif;
+}
+
+canvas {
+   border: 1px dotted black;
+}
+
+.discussion {
+   padding: 3px;
+   margin: 10px;
+   border: 3px solid silver;
+}
+
+.label {
+   font-weight: bold;
+   display: inline-block;
+   width: 100px;
+}
+
+.canvas {
+   float: left;
+   margin: 10px;
+}
+
+.input {
+   float: left;
+   margin: 10px;
+}
+
+.input div {
+  padding: 5px;
+}
+
+</style>
+
+
+<h3>Path Transforms Demo</h3>
+
+<div class="discussion">
+Below is an example of each of the transforms that can be applied to a path.  These
+are the standard 2D transform functions and work similarly to CSS3 tranforms.  Each
+function takes an optional origin that can be a point, percentage that refers to a point
+on the path (ie 25% is a 1/4 of the way along the path), or a text representation of
+a point on the path (start, middle, end).  In this example, the weighted center of the
+body the path creates is used as the origin.
+</div>
+
+<div class="canvas">
+ <canvas></canvas>
+</div>
+
+<div class="input">
+
+   <div>
+    <span class="label">Angle: </span>
+    A:<input id="angle" type="text" value="10" size="4"/>
+    <input id="rotate" type="button" value="Rotate"/>
+   </div>
+
+   <div>
+    <span class="label">Distance: </span>
+    X:<input id="xdistance" type="text" value="10" size="4"/>
+    Y:<input id="ydistance" type="text" value="10" size="4"/>
+    <input id="move" type="button" value="Move"/>
+   </div>
+
+   <div>
+    <span class="label">Size: </span>
+    X:<input id="xsize" type="text" value="1.2" size="4"/>
+    Y:<input id="ysize" type="text" value="1.2" size="4"/>
+    <input id="scale" type="button" value="Scale"/>
+   </div>
+
+   <div>
+    <span class="label">Angle: </span>
+    X:<input id="xangle" type="text" value="10" size="4"/>
+    Y:<input id="yangle" type="text" value="0" size="4"/>
+    <input id="skew" type="button" value="Skew"/>
+   </div>
+
+   <div>
+    <input id="reset" type="button" value="Reset"/>
+   </div>
+</div>
+
+<script>
+$(function()
+{
+
+   var path, copy,
+       c = $('canvas')[0];
+
+   c.height = 300;
+   c.width = 300;
+   r = 100;
+
+   path = PATH([
+               {fn: 'start', x: 20, y: 100},
+               {fn: 'rectangle', h: 100, w: 150}
+             ]);
+
+   copy = path.duplicate();
+
+   function clearCanvas (canvas)
+   {
+       var ctx = canvas.getContext( "2d" );
+
+       ctx.fillStyle = "white";
+       ctx.clearRect(0, 0, canvas.width, canvas.height);
+   }
+
+   $('#rotate').click(function ()
+    {
+       var a = +$('#angle')[0].value;
+
+       copy.rotate(a, path.center());
+
+       clearCanvas(c);
+       PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+
+    });
+
+   $('#move').click(function ()
+    {
+       var dx = +$('#xdistance')[0].value,
+           dy = +$('#ydistance')[0].value;
+
+       copy.move(dx, dy, path.center());
+
+       clearCanvas(c);
+       PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+    });
+
+   $('#scale').click(function ()
+    {
+       var sx = +$('#xsize')[0].value,
+           sy = +$('#ysize')[0].value;
+
+       copy.scale(sx, sy, path.center());
+
+       clearCanvas(c);
+       PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+    });
+
+   $('#skew').click(function ()
+    {
+       var sx = +$('#xangle')[0].value,
+           sy = +$('#yangle')[0].value;
+
+       copy.skew(sx, sy, path.center());
+
+       clearCanvas(c);
+       PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+    });
+
+   $('#reset').click(function ()
+    {
+       copy = path.duplicate();
+
+       clearCanvas(c);
+       PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+    });
+
+
+   PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
+
+});
+</script>
+
+</body>
+</html>
