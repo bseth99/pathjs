@@ -48,6 +48,13 @@ canvas {
   padding: 5px;
 }
 
+#plot {
+   position: absolute;
+   background-color: green;
+   height: 3px;
+   width: 3px;
+}
+
 </style>
 
 
@@ -58,15 +65,29 @@ Below is an example of each of the transforms that can be applied to a path.  Th
 are the standard 2D transform functions and work similarly to CSS3 tranforms.  Each
 function takes an optional origin that can be a point, percentage that refers to a point
 on the path (ie 25% is a 1/4 of the way along the path), or a text representation of
-a point on the path (start, middle, end).  In this example, the weighted center of the
-body the path creates is used as the origin.
+a point on the path (start, middle, end).  In this example, the center of the rectangle's
+bounding box is the default origin.  That point is plotted with a green dot to indicate
+the point the transform is processed around.
 </div>
+
+<div id="plot"></div>
 
 <div class="canvas">
  <canvas></canvas>
 </div>
 
 <div class="input">
+
+   <div>
+    <span class="label">Origin: </span>
+    <select id="origin">
+       <option>Center of Rectangle</option>
+       <option>Axis Origin (0,0)</option>
+       <option>Start of Path</option>
+       <option>60% of the way along path</option>
+       <option>Any Point (250, 70)</option>
+    </select>
+   </div>
 
    <div>
     <span class="label">Angle: </span>
@@ -105,7 +126,8 @@ $(function()
 {
 
    var path, copy,
-       c = $('canvas')[0];
+       c = $('canvas')[0],
+       origin;
 
    c.height = 300;
    c.width = 300;
@@ -117,6 +139,54 @@ $(function()
              ]);
 
    copy = path.duplicate();
+   origin = copy.center();
+
+   function updateOrigin()
+   {
+      var el = $('#origin')[0],
+          val = el.selectedIndex,
+          ofs = $('canvas').offset(),
+          plot;
+
+      switch (val)
+      {
+         case 0 :
+
+            origin = copy.center();
+            plot = origin;
+            break;
+
+         case 1 :
+
+            origin = undefined;
+            plot = {x: 0, y: 0};
+            break;
+
+         case 2 :
+
+            origin = 'start';
+            plot = copy.first();
+            break;
+
+         case 3 :
+
+            origin = '60%';
+            plot = copy.step(0.6);
+            break;
+
+         case 4 :
+
+            origin = {x: 250, y: 70};
+            plot = origin;
+            break;
+
+      }
+
+      $('#plot').css({
+            top: plot.y + ofs.top,
+            left: plot.x + ofs.left
+          });
+   }
 
    function clearCanvas (canvas)
    {
@@ -130,8 +200,9 @@ $(function()
     {
        var a = +$('#angle')[0].value;
 
-       copy.rotate(a, path.center());
+       copy.rotate(a, origin);
 
+       updateOrigin();
        clearCanvas(c);
        PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
 
@@ -142,8 +213,9 @@ $(function()
        var dx = +$('#xdistance')[0].value,
            dy = +$('#ydistance')[0].value;
 
-       copy.move(dx, dy, path.center());
+       copy.move(dx, dy, origin);
 
+       updateOrigin();
        clearCanvas(c);
        PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
     });
@@ -153,8 +225,9 @@ $(function()
        var sx = +$('#xsize')[0].value,
            sy = +$('#ysize')[0].value;
 
-       copy.scale(sx, sy, path.center());
+       copy.scale(sx, sy, origin);
 
+       updateOrigin();
        clearCanvas(c);
        PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
     });
@@ -164,8 +237,9 @@ $(function()
        var sx = +$('#xangle')[0].value,
            sy = +$('#yangle')[0].value;
 
-       copy.skew(sx, sy, path.center());
+       copy.skew(sx, sy, origin);
 
+       updateOrigin();
        clearCanvas(c);
        PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
     });
@@ -174,11 +248,14 @@ $(function()
     {
        copy = path.duplicate();
 
+       updateOrigin();
        clearCanvas(c);
        PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
     });
 
+   $('#origin').on('change', updateOrigin);
 
+   updateOrigin();
    PATH.adapter.drawCanvas(c, copy, {fillStyle: 'yellow'});
 
 });

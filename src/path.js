@@ -45,7 +45,11 @@ OTHER DEALINGS IN THE SOFTWARE.
      var t, i,
          l = p.length;
 
-     if (typeof o == 'string')
+     if (!o)
+     {
+        t = {x: 0, y: 0};
+     }
+     else if (typeof o == 'string')
      {
         if (o.indexOf('%') > 0)
            t = p[Math.floor(parseInt(o, 10) / 100 * l)];
