@@ -15,7 +15,9 @@ it uses adapters to convert the paths into something that can be used with a lib
 
 ## Usage
 
-Just include path.js in your page.  
+[Download](https://raw.github.com/bseth99/pathjs/master/path.min.js) the minified source.
+
+Include path.min.js in your page: 
 
 ``` html
 <script src='path.min.js'></script>
