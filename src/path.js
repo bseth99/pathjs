@@ -596,7 +596,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
          while (ptr<len)
          {
-            c = c.concat(plotBezierQuad.apply(this, pts.slice(ptr-1,ptr+3), step));
+            c = c.concat(plotBezierQuad.apply(this, pts.slice(ptr-1,ptr+3).concat([step])));
             ptr++;
          }
 
